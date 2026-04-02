@@ -8,6 +8,11 @@ import NotFoundError from "../../shared/errors/not-found.error";
 
 @injectable()
 class NodeRepository implements INodeRepository {
+  /**
+   * Converts a database document to a domain entity.
+   * @param doc
+   * @returns
+   */
   private _toEntity(doc: INodeDocument) {
     return new NodeEntity(
       doc._id.toString(),
@@ -16,6 +21,11 @@ class NodeRepository implements INodeRepository {
     );
   }
 
+  /**
+   * Converts a domain entity to a database document.
+   * @param entity
+   * @returns
+   */
   private _toDocument(entity: NodeEntity) {
     return {
       name: entity.name.value,
@@ -25,17 +35,31 @@ class NodeRepository implements INodeRepository {
     };
   }
 
+  /**
+   * Adds a new node to the database.
+   * @param entity
+   * @returns
+   */
   public async addNode(entity: NodeEntity): Promise<NodeEntity> {
     const doc = this._toDocument(entity);
     const node = await nodeModel.create(doc);
     return this._toEntity(node);
   }
 
+  /**
+   * Retrieves all root nodes from the database.
+   * @returns
+   */
   public async getRootNodes(): Promise<NodeEntity[]> {
     const nodes = await nodeModel.find({ parentId: null });
     return nodes.map((node) => this._toEntity(node));
   }
 
+  /**
+   * Retrieves all child nodes of a given parent node.
+   * @param parentId
+   * @returns
+   */
   public async getChildNodes(parentId: string): Promise<NodeEntity[]> {
     const nodes = await nodeModel.find({
       parentId: new mongoose.Types.ObjectId(parentId),
@@ -43,6 +67,11 @@ class NodeRepository implements INodeRepository {
     return nodes.map((node) => this._toEntity(node));
   }
 
+  /**
+   * Retrieves the IDs of all nodes in the subtree rooted at the given parent node.
+   * @param parentId
+   * @returns
+   */
   public async getSubtreeIDs(parentId: string): Promise<string[]> {
     const objectId = new mongoose.Types.ObjectId(parentId);
 
@@ -70,6 +99,10 @@ class NodeRepository implements INodeRepository {
     return result[0].descendants.map((node) => node._id.toString());
   }
 
+  /**
+   * Deletes multiple nodes from the database.
+   * @param ids
+   */
   public async bulkDeleteNodes(ids: string[]): Promise<void> {
     await nodeModel.deleteMany({ _id: { $in: ids } });
   }

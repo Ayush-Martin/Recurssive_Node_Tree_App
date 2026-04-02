@@ -13,7 +13,16 @@ class DeleteNodeUseCase implements IDeleteNodeUseCase {
     @inject(TYPES.NodeRepository) private _nodeRepository: INodeRepository,
   ) {}
 
-  public async execute(dto: forwardDeleteNodeDTO): Promise<backwardDeleteNodeDTO> {
+  /**
+   * Deletes a node and all its descendants from the tree.
+   * It first retrieves all descendant node IDs, then performs a bulk delete operation.
+   * Finally, it returns the list of deleted node IDs for client-side state updates.
+   * @param dto
+   * @returns
+   */
+  public async execute(
+    dto: forwardDeleteNodeDTO,
+  ): Promise<backwardDeleteNodeDTO> {
     const descendantIds = await this._nodeRepository.getSubtreeIDs(dto.nodeId);
     const idsToDelete = [dto.nodeId, ...descendantIds];
     await this._nodeRepository.bulkDeleteNodes(idsToDelete);
@@ -22,4 +31,3 @@ class DeleteNodeUseCase implements IDeleteNodeUseCase {
 }
 
 export default DeleteNodeUseCase;
-

@@ -13,6 +13,11 @@ class GetChildNodesUseCase implements IGetChildNodesUseCase {
     @inject(TYPES.NodeRepository) private _nodeRepository: INodeRepository,
   ) {}
 
+  /**
+   * Retrieves all child nodes of a given parent node.
+   * @param dto
+   * @returns
+   */
   public async execute(
     dto: forwardGetChildNodesDTO,
   ): Promise<backwardGetChildNodesDTO[]> {
@@ -22,4 +27,3 @@ class GetChildNodesUseCase implements IGetChildNodesUseCase {
 }
 
 export default GetChildNodesUseCase;
-

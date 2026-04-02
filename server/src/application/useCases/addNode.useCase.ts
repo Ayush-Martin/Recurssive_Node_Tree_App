@@ -12,6 +12,11 @@ class AddNodeUseCase implements IAddNodeUseCase {
     @inject(TYPES.NodeRepository) private _nodeRepository: INodeRepository,
   ) {}
 
+  /**
+   * Adds a new node to the tree.
+   * @param dto
+   * @returns
+   */
   public async execute(dto: forwardAddNodeDTO): Promise<backwardAddNodeDTO> {
     const nodeEntity = new NodeEntity(
       "",

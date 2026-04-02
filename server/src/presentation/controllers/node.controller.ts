@@ -27,6 +27,12 @@ class NodeController {
     binder(this);
   }
 
+  /**
+   * Adds a new node to the tree.
+   * @param req 
+   * @param res 
+   * @param next 
+   */
   public async addNode(req: Request, res: Response, next: NextFunction) {
     try {
       const dto = new forwardAddNodeDTO(req.body);
@@ -37,6 +43,12 @@ class NodeController {
     }
   }
 
+  /**
+   * Retrieves all root nodes from the tree.
+   * @param req 
+   * @param res 
+   * @param next 
+   */
   public async getRootNodes(req: Request, res: Response, next: NextFunction) {
     try {
       const dto = new forwardGetRootNodesDTO(req.body);
@@ -45,8 +57,14 @@ class NodeController {
     } catch (error) {
       next(error);
     }
-  }
+  } 
 
+  /**
+   * Retrieves all child nodes of a given parent node.
+   * @param req 
+   * @param res 
+   * @param next 
+   */
   public async getChildNodes(
     req: Request,
     res: Response,
@@ -63,6 +81,12 @@ class NodeController {
     }
   }
 
+  /**
+   * Deletes a node from the tree.
+   * @param req 
+   * @param res 
+   * @param next 
+   */
   public async deleteNode(req: Request, res: Response, next: NextFunction) {
     try {
       const dto = new forwardDeleteNodeDTO({ nodeId: req.params.parentId });

@@ -13,6 +13,11 @@ class GetRootNodesUseCase implements IGetRootNodesUseCase {
     @inject(TYPES.NodeRepository) private _nodeRepository: INodeRepository,
   ) {}
 
+  /**
+   * Retrieves all root nodes from the tree.
+   * @param _dto 
+   * @returns 
+   */
   public async execute(
     _dto: forwardGetRootNodesDTO,
   ): Promise<backwardGetRootNodesDTO[]> {
