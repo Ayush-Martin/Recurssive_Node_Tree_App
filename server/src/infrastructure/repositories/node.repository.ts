@@ -20,7 +20,7 @@ class NodeRepository implements INodeRepository {
     return {
       name: entity.name.value,
       parentId: entity.parentId
-        ? new mongoose.Schema.Types.ObjectId(entity.parentId)
+        ? new mongoose.Types.ObjectId(entity.parentId)
         : null,
     };
   }
@@ -38,17 +38,17 @@ class NodeRepository implements INodeRepository {
 
   public async getChildNodes(parentId: string): Promise<NodeEntity[]> {
     const nodes = await nodeModel.find({
-      parentId: new mongoose.Schema.Types.ObjectId(parentId),
+      parentId: new mongoose.Types.ObjectId(parentId),
     });
     return nodes.map((node) => this._toEntity(node));
   }
 
   public async getSubtreeIDs(parentId: string): Promise<string[]> {
-    const objectId = new mongoose.Schema.Types.ObjectId(parentId);
+    const objectId = new mongoose.Types.ObjectId(parentId);
 
     const result = await nodeModel.aggregate<{
-      _id: mongoose.Schema.Types.ObjectId;
-      descendants: { _id: mongoose.Schema.Types.ObjectId }[];
+      _id: mongoose.Types.ObjectId;
+      descendants: { _id: mongoose.Types.ObjectId }[];
     }>([
       { $match: { _id: objectId } },
       {

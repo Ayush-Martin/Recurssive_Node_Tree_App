@@ -1,1 +1,604 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+}
+
+/* ───── Custom Properties ───── */
+:root {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: rgba(18, 18, 18, 0.8);
+  --bg-card-hover: rgba(28, 28, 28, 0.9);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(255, 255, 255, 0.12);
+  --border-highlight: rgba(168, 85, 247, 0.35);
+  --text-primary: #f5f5f5;
+  --text-secondary: #a3a3a3;
+  --text-muted: #636363;
+  --accent: #a855f7;
+  --accent-secondary: #6366f1;
+  --accent-glow: rgba(168, 85, 247, 0.2);
+  --danger: #ef4444;
+  --danger-glow: rgba(239, 68, 68, 0.15);
+  --success: #22c55e;
+  --success-glow: rgba(34, 197, 94, 0.15);
+  --tree-line: rgba(255, 255, 255, 0.06);
+}
+
+/* ───── Global Reset & Base ───── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ───── App Layout ───── */
+.app-wrapper {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+    var(--bg-primary);
+  padding: 2.5rem 2rem;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.app-title {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+}
+
+.app-description {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* ───── NodeTree Container ───── */
+.node-tree-container {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.node-tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.15rem 1.4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  backdrop-filter: blur(16px);
+  margin-bottom: 0.85rem;
+}
+
+.node-tree-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.node-tree-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(99, 102, 241, 0.12));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 1.15rem;
+}
+
+.node-tree-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.node-tree-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* ───── Add Root Button ───── */
+.add-root-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  border: none;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 14px var(--accent-glow);
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+}
+
+.add-root-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px var(--accent-glow);
+  filter: brightness(1.1);
+}
+
+.add-root-btn:active {
+  transform: translateY(0);
+}
+
+/* ───── Add Root Form Wrapper ───── */
+.add-root-form-wrapper {
+  padding: 0.85rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  margin-bottom: 0.85rem;
+  animation: slideDown 0.2s ease;
+}
+
+/* ───── Add Node Form ───── */
+.add-node-form {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.add-node-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add-node-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.add-node-input::placeholder {
+  color: var(--text-muted);
+}
+
+.add-node-input:disabled {
+  opacity: 0.4;
+}
+
+.add-node-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--border-highlight);
+  border-radius: 8px;
+  background: rgba(168, 85, 247, 0.08);
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.add-node-btn:hover:not(:disabled) {
+  background: rgba(168, 85, 247, 0.15);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.add-node-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ───── Node Tree Content ───── */
+.node-tree-content {
+  min-height: 200px;
+}
+
+.node-tree-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* ───── TreeNode ───── */
+.tree-node-wrapper {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.tree-connector-vertical {
+  position: absolute;
+  left: 0.35rem;
+  top: -0.35rem;
+  bottom: 50%;
+  width: 1px;
+  background: var(--tree-line);
+}
+
+.tree-connector-vertical::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1rem;
+  height: 1px;
+  background: var(--tree-line);
+}
+
+/* Root-level nodes don't have connectors */
+.node-tree-list > .tree-node-wrapper {
+  padding-left: 0;
+}
+
+.node-tree-list > .tree-node-wrapper > .tree-connector-vertical {
+  display: none;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tree-node:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+  box-shadow: 0 1px 12px rgba(168, 85, 247, 0.04);
+}
+
+.tree-node--deleting {
+  opacity: 0.3;
+  pointer-events: none;
+  animation: fadeOut 0.3s ease;
+}
+
+.tree-node-accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2.5px;
+  border-radius: 2px 0 0 2px;
+}
+
+/* ───── Toggle Button ───── */
+.tree-node-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+.tree-node-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--accent);
+}
+
+.toggle-icon {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+}
+
+.toggle-icon--expanded {
+  transform: rotate(90deg);
+}
+
+/* ───── Node Name ───── */
+.tree-node-name {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ───── Node Actions ───── */
+.tree-node-actions {
+  display: flex;
+  gap: 0.2rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tree-node:hover .tree-node-actions {
+  opacity: 1;
+}
+
+.tree-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.82rem;
+}
+
+.tree-action-btn--add {
+  background: rgba(34, 197, 94, 0.06);
+  color: var(--success);
+}
+
+.tree-action-btn--add:hover {
+  background: rgba(34, 197, 94, 0.14);
+  box-shadow: 0 0 10px var(--success-glow);
+}
+
+.tree-action-btn--delete {
+  background: rgba(239, 68, 68, 0.06);
+  color: var(--danger);
+}
+
+.tree-action-btn--delete:hover {
+  background: rgba(239, 68, 68, 0.14);
+  box-shadow: 0 0 10px var(--danger-glow);
+}
+
+.tree-action-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* ───── Add Child Form ───── */
+.tree-node-add-form {
+  margin-top: 0.3rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(12, 12, 12, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  animation: slideDown 0.2s ease;
+}
+
+/* ───── Children Container ───── */
+.tree-children {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+  padding-left: 0.5rem;
+  position: relative;
+  animation: expandIn 0.25s ease;
+}
+
+.tree-children::before {
+  content: "";
+  position: absolute;
+  left: 0.35rem;
+  top: 0;
+  bottom: 0.85rem;
+  width: 1px;
+  background: var(--tree-line);
+}
+
+/* ───── Empty Children State ───── */
+.tree-empty-children {
+  margin-top: 0.25rem;
+  padding: 0.45rem 0.8rem;
+  padding-left: 2rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ───── Loading / Error / Empty States ───── */
+.node-tree-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.node-tree-error {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.1rem;
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  border-radius: 10px;
+  color: var(--danger);
+  font-size: 0.82rem;
+}
+
+.retry-btn {
+  margin-left: auto;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.06);
+  color: var(--danger);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+}
+
+.retry-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.node-tree-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.75rem;
+  margin-bottom: 1.15rem;
+}
+
+.empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.empty-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ───── Spinner ───── */
+.spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.spinner--small {
+  width: 13px;
+  height: 13px;
+  border-width: 1.5px;
+}
+
+.spinner--large {
+  width: 26px;
+  height: 26px;
+  border-width: 2.5px;
+}
+
+/* ───── Animations ───── */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ───── Responsive ───── */
+@media (max-width: 640px) {
+  .app-wrapper {
+    padding: 1.25rem 1rem;
+  }
+
+  .node-tree-header {
+    flex-direction: column;
+    gap: 0.85rem;
+    align-items: flex-start;
+  }
+
+  .add-root-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tree-node-actions {
+    opacity: 1;
+  }
+}

@@ -63,7 +63,7 @@ class NodeController {
 
   public async deleteNode(req: Request, res: Response, next: NextFunction) {
     try {
-      const dto = new forwardDeleteNodeDTO({ nodeId: req.params.nodeId });
+      const dto = new forwardDeleteNodeDTO({ nodeId: req.params.parentId });
       const result = await this._deleteNodeUseCase.execute(dto);
       res.status(StatusCodes.OK).json(result);
     } catch (error) {
