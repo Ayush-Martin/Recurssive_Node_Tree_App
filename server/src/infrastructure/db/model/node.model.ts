@@ -1,8 +1,8 @@
-import { Schema, model, Document, ObjectId } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
 export interface INodeDocument extends Document {
   name: string;
-  parentId: ObjectId | null;
+  parentId: Types.ObjectId | null;
 }
 
 const Node = new Schema<INodeDocument>(
