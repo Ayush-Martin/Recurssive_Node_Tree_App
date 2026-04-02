@@ -1,12 +1,5 @@
-class AppError extends Error {
-  status: number;
-
-  constructor(message: string, statusCode: number) {
-    super(message);
-    this.status = statusCode;
-
-    Error.captureStackTrace(this, this.constructor);
-  }
+export enum NodeResponseMessages {
+  NODE_CREATED = "Node created successfully",
+  NODE_DELETED = "Node deleted successfully",
+  NODES_FETCHED = "Nodes fetched successfully",
 }
-
-export default AppError;

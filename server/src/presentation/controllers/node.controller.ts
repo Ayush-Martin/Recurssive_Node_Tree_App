@@ -11,6 +11,8 @@ import { IGetRootNodesUseCase } from "../../application/interface/useCases/IGetR
 import { IGetChildNodesUseCase } from "../../application/interface/useCases/IGetChildNodes.useCase";
 import { IDeleteNodeUseCase } from "../../application/interface/useCases/IDeleteNode.useCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { successResponse } from "../../shared/utils/responseCreator";
+import { NodeResponseMessages } from "../../shared/constants/responseMessages";
 
 @injectable()
 class NodeController {
@@ -29,7 +31,7 @@ class NodeController {
     try {
       const dto = new forwardAddNodeDTO(req.body);
       const newNode = await this._addNodeUseCase.execute(dto);
-      res.status(StatusCodes.CREATED).json(newNode);
+      res.status(StatusCodes.CREATED).json(successResponse(NodeResponseMessages.NODE_CREATED, newNode));
     } catch (error) {
       next(error);
     }
@@ -39,7 +41,7 @@ class NodeController {
     try {
       const dto = new forwardGetRootNodesDTO(req.body);
       const nodes = await this._getRootNodesUseCase.execute(dto);
-      res.status(StatusCodes.OK).json(nodes);
+      res.status(StatusCodes.OK).json(successResponse(NodeResponseMessages.NODES_FETCHED, nodes));
     } catch (error) {
       next(error);
     }
@@ -55,7 +57,7 @@ class NodeController {
         parentId: req.params.parentId,
       });
       const nodes = await this._getChildNodesUseCase.execute(dto);
-      res.status(StatusCodes.OK).json(nodes);
+      res.status(StatusCodes.OK).json(successResponse(NodeResponseMessages.NODES_FETCHED, nodes));
     } catch (error) {
       next(error);
     }
@@ -65,7 +67,7 @@ class NodeController {
     try {
       const dto = new forwardDeleteNodeDTO({ nodeId: req.params.parentId });
       const result = await this._deleteNodeUseCase.execute(dto);
-      res.status(StatusCodes.OK).json(result);
+      res.status(StatusCodes.OK).json(successResponse(NodeResponseMessages.NODE_DELETED, result));
     } catch (error) {
       next(error);
     }
