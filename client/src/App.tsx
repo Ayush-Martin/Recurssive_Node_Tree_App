@@ -1,4 +1,4 @@
-import NodeTree from "../components/NodeTree/NodeTree";
+import NodeTree from "./components/NodeTree";
 
 const App = () => {
   return (

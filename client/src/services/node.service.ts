@@ -3,7 +3,7 @@ import type {
   INode,
   IAddNodePayload,
   IDeleteNodeResponse,
-} from "../src/types/node.types";
+} from "../types/node.types";
 
 const NODES_ENDPOINT = "/nodes";
 

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import type { INode } from "../../src/types/node.types";
-import { getRootNodes, addNode } from "../../services/node.service";
-import TreeNode from "../TreeNode/TreeNode";
-import AddNodeForm from "../AddNodeForm/AddNodeForm";
+import { getRootNodes, addNode } from "../services/node.service";
+import TreeNode from "./TreeNode";
+import AddNodeForm from "./AddNodeForm";
 import { HiPlus } from "react-icons/hi";
 import {
   TbBinaryTree2,

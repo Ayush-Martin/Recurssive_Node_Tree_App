@@ -4,8 +4,8 @@ import {
   getChildNodes,
   addNode,
   deleteNode,
-} from "../../services/node.service";
-import AddNodeForm from "../AddNodeForm/AddNodeForm";
+} from "../services/node.service";
+import AddNodeForm from "./AddNodeForm";
 import { HiChevronRight, HiPlus, HiTrash } from "react-icons/hi";
 
 interface TreeNodeProps {
