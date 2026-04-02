@@ -1,9 +1,11 @@
+import { deleteNodeSchema } from "../../shared/validation/node.validation";
+
 export class forwardDeleteNodeDTO {
   public nodeId: string;
 
   constructor(data: unknown) {
-    const { nodeId } = data as { nodeId: string };
-    this.nodeId = nodeId;
+    const validatedData = deleteNodeSchema.parse(data);
+    this.nodeId = validatedData.nodeId;
   }
 }
 

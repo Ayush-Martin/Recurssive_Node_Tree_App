@@ -176,8 +176,14 @@ body {
   gap: 0.45rem;
 }
 
-.add-node-input {
+.add-node-input-container {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-node-input {
+  width: 100%;
   padding: 0.5rem 0.75rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
@@ -200,6 +206,21 @@ body {
 
 .add-node-input:disabled {
   opacity: 0.4;
+}
+
+.add-node-input--error {
+  border-color: var(--danger) !important;
+}
+
+.add-node-input--error:focus {
+  box-shadow: 0 0 0 3px var(--danger-glow) !important;
+}
+
+.add-node-error-message {
+  color: var(--danger);
+  font-size: 0.72rem;
+  margin-top: 0.25rem;
+  padding-left: 0.25rem;
 }
 
 .add-node-btn {

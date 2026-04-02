@@ -1,11 +1,12 @@
 import NodeEntity from "../../domain/entities/node.entity";
+import { getChildNodesSchema } from "../../shared/validation/node.validation";
 
 export class forwardGetChildNodesDTO {
   public parentId: string;
 
   constructor(data: unknown) {
-    const { parentId } = data as { parentId: string };
-    this.parentId = parentId;
+    const validatedData = getChildNodesSchema.parse(data);
+    this.parentId = validatedData.parentId;
   }
 }
 

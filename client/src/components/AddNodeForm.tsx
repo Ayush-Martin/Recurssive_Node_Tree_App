@@ -1,5 +1,10 @@
 import { FormEvent, useState } from "react";
 import { HiPlus } from "react-icons/hi";
+import { z } from "zod";
+
+const addNodeSchema = z.object({
+  name: z.string().trim().min(3, "Name must be at least 3 characters"),
+});
 
 interface AddNodeFormProps {
   onSubmit: (name: string) => Promise<void>;
@@ -14,15 +19,23 @@ const AddNodeForm = ({
 }: AddNodeFormProps) => {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed || isSubmitting) return;
+    if (isSubmitting) return;
 
+    const validationResult = addNodeSchema.safeParse({ name });
+
+    if (!validationResult.success) {
+      setError(validationResult.error.errors[0].message);
+      return;
+    }
+
+    setError(null);
     setIsSubmitting(true);
     try {
-      await onSubmit(trimmed);
+      await onSubmit(validationResult.data.name);
       setName("");
     } finally {
       setIsSubmitting(false);
@@ -31,14 +44,20 @@ const AddNodeForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="add-node-form">
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder={placeholder}
-        className="add-node-input"
-        disabled={isSubmitting}
-      />
+      <div className="add-node-input-container">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (error) setError(null);
+          }}
+          placeholder={placeholder}
+          className={`add-node-input ${error ? "add-node-input--error" : ""}`}
+          disabled={isSubmitting}
+        />
+        {error && <div className="add-node-error-message">{error}</div>}
+      </div>
       <button
         type="submit"
         className="add-node-btn"

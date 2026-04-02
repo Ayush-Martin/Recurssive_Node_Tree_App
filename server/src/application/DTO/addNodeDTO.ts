@@ -1,13 +1,14 @@
 import NodeEntity from "../../domain/entities/node.entity";
+import { addNodeSchema } from "../../shared/validation/node.validation";
 
 export class forwardAddNodeDTO {
   public parentId: string;
   public name: string;
 
   constructor(data: unknown) {
-    const { parentId, name } = data as { parentId: string; name: string };
-    this.parentId = parentId;
-    this.name = name;
+    const validatedData = addNodeSchema.parse(data);
+    this.parentId = validatedData.parentId;
+    this.name = validatedData.name;
   }
 }
 
