@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { HiPlus } from "react-icons/hi";
 
 interface AddNodeFormProps {
@@ -15,7 +15,7 @@ const AddNodeForm = ({
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmed = name.trim();
     if (!trimmed || isSubmitting) return;
