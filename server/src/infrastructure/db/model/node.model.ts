@@ -13,4 +13,6 @@ const Node = new Schema<INodeDocument>(
   { timestamps: true },
 );
 
+Node.index({ parentId: 1 });
+
 export default model<INodeDocument>("Node", Node);
