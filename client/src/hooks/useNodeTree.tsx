@@ -8,17 +8,14 @@ import {
 const useNodeTree = () => {
   const [rootNodes, setRootNodes] = useState<INode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchRootNodes = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const data = await getRootNodes();
       setRootNodes(data);
-    } catch (err) {
-      console.error("Failed to fetch root nodes:", err);
-      setError("Failed to load nodes. Make sure the server is running.");
+    } catch {
+      // Interceptor handles the toast
     } finally {
       setIsLoading(false);
     }
@@ -33,8 +30,7 @@ const useNodeTree = () => {
       const newNode = await addNodeService({ name, parentId: "" });
       setRootNodes((prev) => [...prev, newNode]);
       return true;
-    } catch (err) {
-      console.error("Add root failed:", err);
+    } catch {
       return false;
     }
   };
@@ -48,7 +44,6 @@ const useNodeTree = () => {
   return {
     rootNodes,
     isLoading,
-    error,
     addRootNode,
     deleteFromState,
     refreshNodes: fetchRootNodes,

@@ -3,6 +3,9 @@ import tseslint from "typescript-eslint";
 import globals from "globals";
 
 export default [
+  {
+    ignores: ["dist/**", "temp_lint.js"]
+  },
 
   // Base JS recommended rules
   js.configs.recommended,

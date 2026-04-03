@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import type { INode } from "../../src/types/node.types";
 import {
   getChildNodes,
@@ -6,6 +6,8 @@ import {
   deleteNode,
 } from "../services/node.service";
 import AddNodeForm from "./AddNodeForm";
+import SkeletonNode from "./SkeletonNode";
+import { Button } from "./ui/Button";
 import { HiChevronRight, HiPlus, HiTrash } from "react-icons/hi";
 
 interface TreeNodeProps {
@@ -29,8 +31,8 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
       const data = await getChildNodes(node.id);
       setChildren(data);
       setHasLoadedChildren(true);
-    } catch (error) {
-      console.error("Failed to load children:", error);
+    } catch {
+      // Interceptor handles the toast
     } finally {
       setIsLoading(false);
     }
@@ -57,8 +59,7 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
     try {
       const result = await deleteNode(node.id);
       onDelete(result.deletedIds);
-    } catch (error) {
-      console.error("Failed to delete node:", error);
+    } catch {
       setIsDeleting(false);
     }
   };
@@ -84,51 +85,44 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
           style={{ background: depthColor }}
         />
 
-        {/* Expand/Collapse toggle */}
-        <button
+        <Button
+          variant="toggle"
           onClick={handleToggle}
-          className="tree-node-toggle"
           aria-label={isExpanded ? "Collapse" : "Expand"}
           title={isExpanded ? "Collapse" : "Expand"}
         >
-          {isLoading ? (
-            <span className="spinner spinner--small" />
-          ) : (
-            <span
-              className={`toggle-icon ${isExpanded ? "toggle-icon--expanded" : ""}`}
-            >
-              <HiChevronRight />
-            </span>
-          )}
-        </button>
+          <span
+            className={`toggle-icon ${isExpanded ? "toggle-icon--expanded" : ""}`}
+            style={{ opacity: isLoading ? 0.5 : 1 }}
+          >
+            <HiChevronRight />
+          </span>
+        </Button>
 
-        {/* Node name */}
         <span className="tree-node-name">{node.name}</span>
 
-        {/* Actions */}
         <div className="tree-node-actions">
-          <button
+          <Button
+            variant="action-add"
             onClick={() => setShowAddForm((prev) => !prev)}
-            className="tree-action-btn tree-action-btn--add"
             title="Add child node"
             aria-label="Add child node"
           >
             <HiPlus />
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="action-delete"
             onClick={handleDelete}
-            className="tree-action-btn tree-action-btn--delete"
             title="Delete node"
             aria-label="Delete node"
             disabled={isDeleting}
           >
             <HiTrash />
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Add child form */}
       {showAddForm && (
         <div className="tree-node-add-form">
           <AddNodeForm
@@ -139,10 +133,15 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
         </div>
       )}
 
-      {/* Children */}
-      {isExpanded && children.length > 0 && (
+      {isExpanded && (
         <div className="tree-children">
-          {children.map((child) => (
+          {isLoading && (
+            <div style={{ marginTop: "0.25rem" }}>
+              <SkeletonNode depth={depth + 1} />
+              <SkeletonNode depth={depth + 1} />
+            </div>
+          )}
+          {!isLoading && children.length > 0 && children.map((child) => (
             <TreeNode
               key={child.id}
               node={child}
@@ -153,7 +152,6 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
         </div>
       )}
 
-      {/* Empty state */}
       {isExpanded && hasLoadedChildren && children.length === 0 && !isLoading && (
         <div className="tree-empty-children">
           <span>No child nodes</span>
@@ -163,4 +161,4 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
   );
 };
 
-export default TreeNode;
+export default memo(TreeNode);

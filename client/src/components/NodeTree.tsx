@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { HiPlus } from "react-icons/hi";
-import { TbBinaryTree2, TbSquareRoundedPlus, TbAlertCircle } from "react-icons/tb";
+import { TbBinaryTree2, TbSquareRoundedPlus } from "react-icons/tb";
 import useNodeTree from "../hooks/useNodeTree";
 import TreeNode from "./TreeNode";
 import AddNodeForm from "./AddNodeForm";
+import SkeletonNode from "./SkeletonNode";
+import { Button } from "./ui/Button";
 
 const NodeTree = () => {
   const { 
     rootNodes, 
-    isLoading, 
-    error, 
+    isLoading,
     addRootNode, 
-    deleteFromState, 
-    refreshNodes 
+    deleteFromState,
   } = useNodeTree();
 
   const [showAddRoot, setShowAddRoot] = useState(false);
@@ -24,7 +24,6 @@ const NodeTree = () => {
 
   return (
     <div className="node-tree-container">
-      {/* Header */}
       <header className="node-tree-header">
         <div className="node-tree-header-left">
           <div className="node-tree-icon"><TbBinaryTree2 /></div>
@@ -36,12 +35,11 @@ const NodeTree = () => {
           </div>
         </div>
 
-        <button onClick={() => setShowAddRoot(!showAddRoot)} className="add-root-btn">
+        <Button onClick={() => setShowAddRoot(!showAddRoot)} variant="primary">
           <HiPlus /> {showAddRoot ? "Cancel" : "Add Root Node"}
-        </button>
+        </Button>
       </header>
 
-      {/* Conditional Forms */}
       {showAddRoot && (
         <section className="add-root-form-wrapper">
           <AddNodeForm 
@@ -52,13 +50,17 @@ const NodeTree = () => {
         </section>
       )}
 
-      {/* Main Content Area */}
       <main className="node-tree-content">
-        {isLoading && <LoadingState />}
-        {error && <ErrorState message={error} onRetry={refreshNodes} />}
-        {!isLoading && !error && rootNodes.length === 0 && <EmptyState />}
+        {isLoading && (
+          <div className="node-tree-list">
+            {[1, 2, 3].map((i) => (
+              <SkeletonNode key={i} />
+            ))}
+          </div>
+        )}
+        {!isLoading && rootNodes.length === 0 && <EmptyState />}
         
-        {!isLoading && !error && rootNodes.length > 0 && (
+        {!isLoading && rootNodes.length > 0 && (
           <div className="node-tree-list">
             {rootNodes.map((node) => (
               <TreeNode
@@ -75,27 +77,11 @@ const NodeTree = () => {
   );
 };
 
-// Sub-components for cleaner JSX
-const LoadingState = () => (
-  <div className="node-tree-loading">
-    <span className="spinner spinner--large" />
-    <p>Loading nodes...</p>
-  </div>
-);
-
 const EmptyState = () => (
   <div className="node-tree-empty">
     <div className="empty-icon"><TbSquareRoundedPlus /></div>
     <p className="empty-title">No nodes yet</p>
     <p className="empty-subtitle">Click "Add Root Node" to create your first node</p>
-  </div>
-);
-
-const ErrorState = ({ message, onRetry }: { message: string, onRetry: () => void }) => (
-  <div className="node-tree-error">
-    <TbAlertCircle size={18} />
-    <span>{message}</span>
-    <button onClick={onRetry} className="retry-btn">Retry</button>
   </div>
 );
 

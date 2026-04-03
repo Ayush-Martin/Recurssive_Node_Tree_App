@@ -1,6 +1,8 @@
 import { FC, FormEvent, useState } from "react";
 import { HiPlus } from "react-icons/hi";
 import { z } from "zod";
+import { Input } from "./ui/Input";
+import { Button } from "./ui/Button";
 
 const addNodeSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
@@ -46,39 +48,29 @@ const AddNodeForm: FC<AddNodeFormProps> = ({
   };
 
   const isInvalid = !name.trim();
-  const inputClass = `add-node-input ${error ? "add-node-input--error" : ""}`;
 
   return (
     <form onSubmit={handleSubmit} className="add-node-form">
-      <div className="add-node-input-container">
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            if (error) setError(null);
-          }}
-          placeholder={placeholder}
-          className={inputClass}
-          disabled={isSubmitting}
-        />
-        {error && <div className="add-node-error-message">{error}</div>}
-      </div>
+      <Input
+        value={name}
+        onChange={(e) => {
+          setName(e.target.value);
+          if (error) setError(null);
+        }}
+        placeholder={placeholder}
+        disabled={isSubmitting}
+        error={error}
+      />
 
-      <button
+      <Button
         type="submit"
-        className="add-node-btn"
-        disabled={isInvalid || isSubmitting}
+        variant="outline"
+        disabled={isInvalid}
+        isLoading={isSubmitting}
       >
-        {isSubmitting ? (
-          <span className="spinner" />
-        ) : (
-          <>
-            <HiPlus />
-            <span>{buttonLabel}</span>
-          </>
-        )}
-      </button>
+        <HiPlus />
+        <span>{buttonLabel}</span>
+      </Button>
     </form>
   );
 };
