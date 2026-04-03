@@ -32,7 +32,6 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
       setChildren(data);
       setHasLoadedChildren(true);
     } catch {
-      // Interceptor handles the toast
     } finally {
       setIsLoading(false);
     }
@@ -92,8 +91,7 @@ const TreeNode = ({ node, onDelete, depth }: TreeNodeProps) => {
           title={isExpanded ? "Collapse" : "Expand"}
         >
           <span
-            className={`toggle-icon ${isExpanded ? "toggle-icon--expanded" : ""}`}
-            style={{ opacity: isLoading ? 0.5 : 1 }}
+            className={`toggle-icon ${isExpanded ? "toggle-icon--expanded" : ""} ${isLoading ? "toggle-icon--loading" : ""}`}
           >
             <HiChevronRight />
           </span>

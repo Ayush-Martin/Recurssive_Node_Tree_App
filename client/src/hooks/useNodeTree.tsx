@@ -15,7 +15,6 @@ const useNodeTree = () => {
       const data = await getRootNodes();
       setRootNodes(data);
     } catch {
-      // Interceptor handles the toast
     } finally {
       setIsLoading(false);
     }
