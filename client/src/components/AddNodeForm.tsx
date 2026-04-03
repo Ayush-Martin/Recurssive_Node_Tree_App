@@ -1,9 +1,9 @@
-import { FormEvent, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { HiPlus } from "react-icons/hi";
 import { z } from "zod";
 
 const addNodeSchema = z.object({
-  name: z.string().trim().min(3, "Name must be at least 3 characters"),
+  name: z.string().trim().min(1, "Name is required"),
 });
 
 interface AddNodeFormProps {
@@ -12,11 +12,11 @@ interface AddNodeFormProps {
   buttonLabel?: string;
 }
 
-const AddNodeForm = ({
+const AddNodeForm: FC<AddNodeFormProps> = ({
   onSubmit,
   placeholder = "Node name",
   buttonLabel = "Add",
-}: AddNodeFormProps) => {
+}) => {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,22 +25,28 @@ const AddNodeForm = ({
     e.preventDefault();
     if (isSubmitting) return;
 
-    const validationResult = addNodeSchema.safeParse({ name });
-
-    if (!validationResult.success) {
-      setError(validationResult.error.errors[0].message);
+    const validation = addNodeSchema.safeParse({ name });
+    if (!validation.success) {
+      setError(validation.error.issues[0].message);
       return;
     }
 
     setError(null);
     setIsSubmitting(true);
+
     try {
-      await onSubmit(validationResult.data.name);
+      await onSubmit(validation.data.name);
       setName("");
+    } catch (err) {
+      console.error("AddNodeForm submission failed:", err);
+      setError("Failed to create node. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const isInvalid = !name.trim();
+  const inputClass = `add-node-input ${error ? "add-node-input--error" : ""}`;
 
   return (
     <form onSubmit={handleSubmit} className="add-node-form">
@@ -53,22 +59,23 @@ const AddNodeForm = ({
             if (error) setError(null);
           }}
           placeholder={placeholder}
-          className={`add-node-input ${error ? "add-node-input--error" : ""}`}
+          className={inputClass}
           disabled={isSubmitting}
         />
         {error && <div className="add-node-error-message">{error}</div>}
       </div>
+
       <button
         type="submit"
         className="add-node-btn"
-        disabled={!name.trim() || isSubmitting}
+        disabled={isInvalid || isSubmitting}
       >
         {isSubmitting ? (
           <span className="spinner" />
         ) : (
           <>
             <HiPlus />
-            {buttonLabel}
+            <span>{buttonLabel}</span>
           </>
         )}
       </button>

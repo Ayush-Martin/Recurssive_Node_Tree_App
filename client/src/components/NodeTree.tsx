@@ -1,59 +1,33 @@
-import { useState, useEffect, useCallback } from "react";
-import type { INode } from "../../src/types/node.types";
-import { getRootNodes, addNode } from "../services/node.service";
+import { useState } from "react";
+import { HiPlus } from "react-icons/hi";
+import { TbBinaryTree2, TbSquareRoundedPlus, TbAlertCircle } from "react-icons/tb";
+import useNodeTree from "../hooks/useNodeTree";
 import TreeNode from "./TreeNode";
 import AddNodeForm from "./AddNodeForm";
-import { HiPlus } from "react-icons/hi";
-import {
-  TbBinaryTree2,
-  TbSquareRoundedPlus,
-  TbAlertCircle,
-} from "react-icons/tb";
 
 const NodeTree = () => {
-  const [rootNodes, setRootNodes] = useState<INode[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { 
+    rootNodes, 
+    isLoading, 
+    error, 
+    addRootNode, 
+    deleteFromState, 
+    refreshNodes 
+  } = useNodeTree();
+
   const [showAddRoot, setShowAddRoot] = useState(false);
 
-  const fetchRootNodes = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await getRootNodes();
-      setRootNodes(data);
-    } catch (err) {
-      console.error("Failed to fetch root nodes:", err);
-      setError("Failed to load nodes. Make sure the server is running.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchRootNodes();
-  }, [fetchRootNodes]);
-
-  const handleAddRoot = async (name: string) => {
-    const newNode = await addNode({ name, parentId: "" });
-    setRootNodes((prev) => [...prev, newNode]);
-    setShowAddRoot(false);
-  };
-
-  const handleNodeDelete = (deletedIds: string[]) => {
-    setRootNodes((prev) =>
-      prev.filter((node) => !deletedIds.includes(node.id))
-    );
+  const handleAddRootSubmit = async (name: string) => {
+    const success = await addRootNode(name);
+    if (success) setShowAddRoot(false);
   };
 
   return (
     <div className="node-tree-container">
       {/* Header */}
-      <div className="node-tree-header">
+      <header className="node-tree-header">
         <div className="node-tree-header-left">
-          <div className="node-tree-icon">
-            <TbBinaryTree2 />
-          </div>
+          <div className="node-tree-icon"><TbBinaryTree2 /></div>
           <div>
             <h1 className="node-tree-title">Node Tree</h1>
             <p className="node-tree-subtitle">
@@ -62,72 +36,67 @@ const NodeTree = () => {
           </div>
         </div>
 
-        <button
-          onClick={() => setShowAddRoot((prev) => !prev)}
-          className="add-root-btn"
-        >
-          <HiPlus />
-          Add Root Node
+        <button onClick={() => setShowAddRoot(!showAddRoot)} className="add-root-btn">
+          <HiPlus /> {showAddRoot ? "Cancel" : "Add Root Node"}
         </button>
-      </div>
+      </header>
 
-      {/* Add root form */}
+      {/* Conditional Forms */}
       {showAddRoot && (
-        <div className="add-root-form-wrapper">
-          <AddNodeForm
-            onSubmit={handleAddRoot}
-            placeholder="Root node name..."
-            buttonLabel="Create Root"
+        <section className="add-root-form-wrapper">
+          <AddNodeForm 
+            onSubmit={handleAddRootSubmit} 
+            placeholder="Root node name..." 
+            buttonLabel="Create Root" 
           />
-        </div>
+        </section>
       )}
 
-      {/* Content */}
-      <div className="node-tree-content">
-        {isLoading && (
-          <div className="node-tree-loading">
-            <span className="spinner spinner--large" />
-            <p>Loading nodes...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="node-tree-error">
-            <TbAlertCircle size={18} />
-            <span>{error}</span>
-            <button onClick={fetchRootNodes} className="retry-btn">
-              Retry
-            </button>
-          </div>
-        )}
-
-        {!isLoading && !error && rootNodes.length === 0 && (
-          <div className="node-tree-empty">
-            <div className="empty-icon">
-              <TbSquareRoundedPlus />
-            </div>
-            <p className="empty-title">No nodes yet</p>
-            <p className="empty-subtitle">
-              Click "Add Root Node" to create your first node
-            </p>
-          </div>
-        )}
-
+      {/* Main Content Area */}
+      <main className="node-tree-content">
+        {isLoading && <LoadingState />}
+        {error && <ErrorState message={error} onRetry={refreshNodes} />}
+        {!isLoading && !error && rootNodes.length === 0 && <EmptyState />}
+        
         {!isLoading && !error && rootNodes.length > 0 && (
           <div className="node-tree-list">
             {rootNodes.map((node) => (
               <TreeNode
                 key={node.id}
                 node={node}
-                onDelete={handleNodeDelete}
+                onDelete={deleteFromState}
                 depth={0}
               />
             ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };
+
+// Sub-components for cleaner JSX
+const LoadingState = () => (
+  <div className="node-tree-loading">
+    <span className="spinner spinner--large" />
+    <p>Loading nodes...</p>
+  </div>
+);
+
+const EmptyState = () => (
+  <div className="node-tree-empty">
+    <div className="empty-icon"><TbSquareRoundedPlus /></div>
+    <p className="empty-title">No nodes yet</p>
+    <p className="empty-subtitle">Click "Add Root Node" to create your first node</p>
+  </div>
+);
+
+const ErrorState = ({ message, onRetry }: { message: string, onRetry: () => void }) => (
+  <div className="node-tree-error">
+    <TbAlertCircle size={18} />
+    <span>{message}</span>
+    <button onClick={onRetry} className="retry-btn">Retry</button>
+  </div>
+);
 
 export default NodeTree;
